@@ -1,11 +1,15 @@
+import fs from "fs";
 import path from "path";
 
 import Parser from "web-tree-sitter";
 
-const basePath =
-  process.env.IS_DEV == "false"
-    ? __dirname
-    : path.join(__dirname, "..", "node_modules", "tree-sitter-wasms", "out");
+const moduleParsersPath = path.join(
+  __dirname,
+  "..",
+  "node_modules",
+  "tree-sitter-wasms",
+  "out"
+);
 
 const languages = {
   c: "tree-sitter-c",
@@ -35,7 +39,10 @@ export async function initParser() {
   languageParsers = {} as any;
   for (const [id, name] of Object.entries(languages)) {
     const language = await Parser.Language.load(
-      path.join(basePath, name + ".wasm")
+      path.join(
+        fs.existsSync(moduleParsersPath) ? moduleParsersPath : __dirname,
+        name + ".wasm"
+      )
     );
     languageParsers[id as LanguageId] = language;
   }
