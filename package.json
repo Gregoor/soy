@@ -16,7 +16,7 @@
     "test": "jest src"
   },
   "engines": {
-    "vscode": "^1.73.1"
+    "vscode": "^1.74.2"
   },
   "devDependencies": {
     "@jest/globals": "^29.3.1",
@@ -85,12 +85,12 @@
       },
       {
         "command": "soy.moveLeft",
-        "key": "Shift+Alt+left",
+        "key": "Cmd+Shift+left",
         "when": "editorTextFocus"
       },
       {
         "command": "soy.moveRight",
-        "key": "Shift+Alt+right",
+        "key": "Cmd+Shift+right",
         "when": "editorTextFocus"
       }
     ]

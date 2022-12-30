@@ -34,7 +34,7 @@ jobs:
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
         run: |
           pnpm build
-          npx vsce package --no-dependencies --allow-missing-repository
+          npx @vscode/vsce package --no-dependencies --allow-missing-repository
       - name: Bump version and push tag
         id: tag_version
         uses: mathieudutour/github-tag-action@v6.1
@@ -43,7 +43,7 @@ jobs:
           default_bump: ${{ inputs.bump_type }}
       - env:
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
-        run: npx vsce publish ${{ steps.tag_version.outputs.new_tag }} --no-dependencies --allow-missing-repository
+        run: npx @vscode/vsce publish ${{ steps.tag_version.outputs.new_tag }} --no-dependencies --allow-missing-repository
       - name: Create a GitHub release
         uses: ncipollo/release-action@v1
         with:
