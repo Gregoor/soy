@@ -39,10 +39,22 @@
     "Other"
   ],
   "activationEvents": [
+    "onLanguage:c",
+    "onLanguage:cpp",
+    "onLanguage:csharp",
+    "onLanguage:css",
+    "onLanguage:go",
+    "onLanguage:html",
+    "onLanguage:java",
     "onLanguage:javascript",
     "onLanguage:javascriptreact",
+    "onLanguage:json",
+    "onLanguage:python",
+    "onLanguage:ruby",
+    "onLanguage:rust",
     "onLanguage:typescript",
-    "onLanguage:typescriptreact"
+    "onLanguage:typescriptreact",
+    "onLanguage:yaml"
   ],
   "contributes": {
     "commands": [
