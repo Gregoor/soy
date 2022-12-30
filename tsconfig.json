@@ -2,7 +2,7 @@
   "compilerOptions": {
     "rootDir": "src",
     "typeRoots": ["./node_modules/@types"],
-    "module": "commonjs",
+    "module": "Node16",
     "target": "es2021",
     "lib": ["es2021"],
     "outDir": "out",

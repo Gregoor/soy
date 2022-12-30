@@ -20,4 +20,5 @@ esbuild.build({
   platform: "node",
   format: "cjs",
   outfile: path.join("out", "node.js"),
+  define: { "process.env.IS_DEV": JSON.stringify(dev) },
 });

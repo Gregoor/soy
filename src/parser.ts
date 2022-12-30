@@ -2,13 +2,9 @@ import path from "path";
 
 import Parser from "web-tree-sitter";
 
-const basePath = path.join(
-  __dirname,
-  "..",
-  "node_modules",
-  "tree-sitter-wasms",
-  "out"
-);
+const basePath = process.env.IS_DEV
+  ? path.join(__dirname, "..", "node_modules", "tree-sitter-wasms", "out")
+  : __dirname;
 
 const languages = {
   c: "tree-sitter-c",
