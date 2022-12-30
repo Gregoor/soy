@@ -63,6 +63,11 @@ export function move(
 
   return {
     subs,
-    cursor: to.isBefore(from) ? Range.fromLength(to.start, from.length) : to,
+    cursor: to.isBefore(from)
+      ? Range.fromLength(to.start, from.length)
+      : Range.fromLength(
+          to.start - Math.abs(to.length - from.length),
+          from.length
+        ),
   };
 }

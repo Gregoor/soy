@@ -13,6 +13,7 @@ beforeAll(async () => {
 
 test.each([
   ["[a, ≤b≥, c]", "[a, c, ≤b≥]", +1],
+  ["[≤aa≥, b]", "[b, ≤aa≥]", +1],
   ["[a, c, ≤b≥]", "[a, ≤b≥, c]", -1],
   ["[b, f(≤a≥)]", "[≤f(a)≥, b]", -1],
 ])("%s", (sourceWithCursor: string, expected: string, offset: number) => {
