@@ -31,12 +31,15 @@ const getOrInitCode = (document: TextDocument) => {
     return codes.get(document);
   }
   const languageId = document.languageId as LanguageId;
-  // document.eol;
   if (!LANGUAGE_IDS.includes(languageId)) {
     return;
   }
 
-  const code = new Code(document.getText(), languageId);
+  const code = new Code(
+    document.getText(),
+    languageId,
+    document.eol == vscode.EndOfLine.LF ? "\n" : "\r\n"
+  );
   codes.set(document, code);
   return code;
 };
@@ -78,7 +81,7 @@ type TextCommandParams = {
 };
 
 const handleMove = (
-  { code, cursor, textEditor, edit }: TextCommandParams,
+  { code, cursor, textEditor }: TextCommandParams,
   offset: -1 | 1
 ) => {
   const change = move(code, cursor, offset);
@@ -86,10 +89,15 @@ const handleMove = (
     return;
   }
   const { document } = textEditor;
-  for (const sub of change.subs) {
-    edit.replace(toPointRange(document, sub.range), sub.replacement);
-  }
-  textEditor.selection = toSelection(textEditor.document, change.cursor);
+  textEditor
+    .edit((edit) => {
+      for (const sub of change.subs) {
+        edit.replace(toPointRange(document, sub.range), sub.replacement);
+      }
+    })
+    .then(() => {
+      textEditor.selection = toSelection(textEditor.document, change.cursor);
+    });
 };
 
 const commands: Record<string, (params: TextCommandParams) => void> = {

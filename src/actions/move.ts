@@ -54,8 +54,7 @@ export function move(
   const subs = [
     new Sub(to, code.source.slice(from.start, from.end)),
     new Sub(from, code.source.slice(to.start, to.end)),
-  ];
-  subs.sort((s1, s2) => (s1.range.isBefore(s2.range) ? 1 : -1));
+  ].sort((s1, s2) => (s1.range.isBefore(s2.range) ? 1 : -1));
 
   if (!code.tree.hasError() && wouldError(code, subs)) {
     return move(code, collection.select(), offset);
