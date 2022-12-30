@@ -1,0 +1,16 @@
+{
+  "cSpell.words": [
+    "accu",
+    "cursorify",
+    "esbuild",
+    "Interactivities",
+    "nocheck",
+    "operationalized",
+    "Operationize",
+    "watware"
+  ],
+  "testing.automaticallyOpenPeekView": "never",
+  "search.exclude": {
+    "**/out/**": true
+  }
+}
