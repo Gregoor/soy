@@ -92,17 +92,17 @@
       },
       {
         "command": "soy.unwrap",
-        "key": "Alt+up",
+        "key": "Ctrl+Shift+up",
         "when": "editorTextFocus"
       },
       {
         "command": "soy.moveLeft",
-        "key": "Cmd+Shift+left",
+        "key": "Ctrl+Shift+left",
         "when": "editorTextFocus"
       },
       {
         "command": "soy.moveRight",
-        "key": "Cmd+Shift+right",
+        "key": "Ctrl+Shift+right",
         "when": "editorTextFocus"
       }
     ]
