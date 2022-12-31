@@ -2,10 +2,10 @@
   "name": "soyfu",
   "displayName": "Soy",
   "version": "1.0.0",
-  "description": "",
+  "description": "Structural commands based on your code's syntax tree",
   "publisher": "watware",
   "bugs": {
-    "url": "https://github.com/gregoor/tofu",
+    "url": "https://github.com/gregoor/soy",
     "email": "gregorwbr@gmail.com"
   },
   "license": "UNLICENSED",
