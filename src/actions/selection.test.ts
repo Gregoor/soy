@@ -16,6 +16,7 @@ test.each([
   ["/* a\n   •b */", "/* ≤a\n   ≥b */"],
   ['f("a•b")', 'f(≤"ab"≥)'],
   [["{", "  asd•ef;", "}"].join("\n"), ["{", "  ≤asdef≥;", "}"].join("\n")],
+  ["[≤a≥, b]", "[≤a, b≥]"],
 ])("%s", (sourceWithCursor: string, expected: string) => {
   const { source, cursors } = parseCursorSource(sourceWithCursor);
   const code = new Code(source, "javascript");

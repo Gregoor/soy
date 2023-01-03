@@ -1,5 +1,6 @@
 import { Code } from "~/code";
 import { Range } from "~/range";
+import { SoyNode } from "~/soy-tree";
 
 export function extendSelection(code: Code, cursor: Range): Range {
   const { tree } = code;
@@ -20,7 +21,21 @@ export function extendSelection(code: Code, cursor: Range): Range {
   }
 
   const ancestor = cursorNode.findAncestor((n) => !n.select().equals(cursor));
-  return ancestor ? ancestor.select() : cursor;
+  if (!ancestor) {
+    return cursor;
+  }
+
+  if (ancestor.namedChildCount > 0) {
+    const childrenRange = new Range(
+      ancestor.firstChild!.start,
+      ancestor.lastChild!.end
+    );
+    if (!childrenRange.equals(cursor)) {
+      return childrenRange;
+    }
+  }
+
+  return ancestor.select();
 }
 
 export function shrinkSelection(
@@ -32,7 +47,7 @@ export function shrinkSelection(
     return tree.getNode(cursor).firstChild?.select() ?? cursor;
   }
 
-  let preRange: Range | null = null;
+  let descendant: SoyNode | null = null;
   tree
     .getNode(cursor)
     .getNode(initialCursor)
@@ -40,9 +55,9 @@ export function shrinkSelection(
       const range = n.select();
       const isEqualToCursor = range.equals(cursor);
       if (!isEqualToCursor) {
-        preRange = range;
+        descendant = n;
       }
       return isEqualToCursor;
     });
-  return preRange || cursor;
+  return descendant!?.select() || cursor;
 }

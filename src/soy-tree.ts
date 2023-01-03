@@ -30,7 +30,11 @@ export class SoyNode {
   }
 
   get firstChild(): SoyNode | null {
-    const child = this.inner.firstChild;
+    const child = this.inner.firstNamedChild;
+    return child ? new SoyNode(child) : null;
+  }
+  get lastChild(): SoyNode | null {
+    const child = this.inner.lastNamedChild;
     return child ? new SoyNode(child) : null;
   }
 
