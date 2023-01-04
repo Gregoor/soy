@@ -82,12 +82,12 @@
     "keybindings": [
       {
         "command": "soy.extendSelection",
-        "key": "Shift+up",
+        "key": "Shift+Alt+up",
         "when": "editorTextFocus"
       },
       {
         "command": "soy.shrinkSelection",
-        "key": "Shift+down",
+        "key": "Shift+Alt+down",
         "when": "editorTextFocus"
       },
       {
