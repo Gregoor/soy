@@ -1,6 +1,5 @@
 import { Code } from "~/code";
 import { Range } from "~/range";
-import { SoyNode } from "~/soy-tree";
 
 export function extendSelection(code: Code, cursor: Range): Range {
   const { tree } = code;
@@ -20,7 +19,9 @@ export function extendSelection(code: Code, cursor: Range): Range {
     return cursorNode.select();
   }
 
-  const ancestor = cursorNode.findAncestor((n) => !n.select().equals(cursor));
+  const ancestor = cursorNode
+    .iterAncestors()
+    .find((n) => !n.select().equals(cursor));
   if (!ancestor) {
     return cursor;
   }
@@ -39,25 +40,21 @@ export function extendSelection(code: Code, cursor: Range): Range {
 }
 
 export function shrinkSelection(
-  { tree }: Code,
+  code: Code,
   cursor: Range,
   initialCursor?: Range
-) {
+): Range {
   if (!initialCursor) {
-    return tree.getNode(cursor).firstChild?.select() ?? cursor;
+    return code.tree.getNode(cursor).firstChild?.select() ?? cursor;
   }
 
-  let descendant: SoyNode | null = null;
-  tree
-    .getNode(cursor)
-    .getNode(initialCursor)
-    .findAncestor((n) => {
-      const range = n.select();
-      const isEqualToCursor = range.equals(cursor);
-      if (!isEqualToCursor) {
-        descendant = n;
-      }
-      return isEqualToCursor;
-    });
-  return descendant!?.select() || cursor;
+  let currentCursor = initialCursor;
+  while (cursor.includes(currentCursor)) {
+    const nextCursor = extendSelection(code, currentCursor);
+    if (nextCursor.equals(cursor)) {
+      return currentCursor;
+    }
+    currentCursor = nextCursor;
+  }
+  return initialCursor;
 }

@@ -1,22 +1,28 @@
 import { SyntaxNode } from "web-tree-sitter";
 
-import { Sub } from "~/change";
+import { isErrAfterSubs, Sub } from "~/change";
 import { Code } from "~/code";
 import { Range } from "~/range";
 
 const isFieldOnParent = (n: SyntaxNode) =>
   n.parent?.childForFieldName(n.type)?.equals(n);
 
-export function unwrap({ tree, source }: Code, cursor: Range): Sub | null {
-  const node = tree.getNode(cursor);
+export function unwrap(code: Code, cursor: Range): Sub | null {
+  const node = code.tree.getNode(cursor);
   if (!node.inner.isNamed()) {
     return null;
   }
-  const ancestor = node.findAncestor(
-    (n) => !n.select().equals(cursor) && !isFieldOnParent(n.inner)
-  );
-
-  return ancestor
-    ? new Sub(ancestor.select(), source.slice(node.start, node.end))
-    : null;
+  for (const ancestor of node.iterAncestors()) {
+    if (cursor.includes(ancestor.select()) || isFieldOnParent(ancestor.inner)) {
+      continue;
+    }
+    const sub = new Sub(
+      ancestor.select(),
+      code.source.slice(node.start, node.end)
+    );
+    if (!isErrAfterSubs(code, [sub])) {
+      return sub;
+    }
+  }
+  return null;
 }

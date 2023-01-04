@@ -4,8 +4,9 @@ import assert from "assert";
 import { Code } from "~/code";
 import { cursorifySource, parseCursorSource } from "~/cursor-source";
 import { initParser } from "~/parser";
+import { applySubs } from "~/utils";
 
-import { applySubs, move } from "./move";
+import { move } from "./move";
 
 beforeAll(async () => {
   await initParser();

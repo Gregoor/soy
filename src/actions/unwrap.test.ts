@@ -5,7 +5,7 @@ import { Code } from "~/code";
 import { cursorifySource, parseCursorSource } from "~/cursor-source";
 import { initParser } from "~/parser";
 import { Range } from "~/range";
-import { replaceRange } from "~/replace-range";
+import { replaceRange } from "~/utils";
 
 import { unwrap } from "./unwrap";
 
@@ -17,6 +17,7 @@ test.each([
   ["let n = [4•2];", "let n = ≤42≥;"],
   ["() => { ≤23≥ };", "() => ≤23≥;"],
   ["fn(•a)", "≤a≥"],
+  ["let n = ≤1≥;", "≤1≥"],
 ])("%s", (sourceWithCursor: string, expected: string) => {
   const { source, cursors } = parseCursorSource(sourceWithCursor);
   const code = new Code(source, "javascript");

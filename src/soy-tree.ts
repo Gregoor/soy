@@ -1,6 +1,13 @@
 import { SyntaxNode, Tree } from "web-tree-sitter";
+import { _ } from "./iter-utils";
 
 import { Range } from "./range";
+
+function* iterAncestors(n: SoyNode | null) {
+  while ((n = n?.parent ?? null)) {
+    yield n;
+  }
+}
 
 export class SoyNode {
   inner: SyntaxNode;
@@ -43,19 +50,7 @@ export class SoyNode {
   getNode = ({ start, end }: Range) =>
     new SoyNode(this.inner.descendantForIndex(start, end));
 
-  findAncestor = (where: (ancestor: SoyNode) => any) => {
-    let n: SoyNode = this;
-    while (true) {
-      let parent = n.parent;
-      if (!parent) {
-        return;
-      }
-      if (where(parent)) {
-        return parent;
-      }
-      n = parent;
-    }
-  };
+  iterAncestors = () => _(iterAncestors(this));
 
   select = () => new Range(this.inner.startIndex, this.inner.endIndex);
 }
