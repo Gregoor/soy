@@ -16,7 +16,7 @@ export class Sub {
 export type SubChange = { sub: Sub; cursor: Range };
 export type Change = { sub?: Sub; cursor: Range };
 
-export const isErrAfterSubs = (code: Code, subs: Sub[]) => {
+export const hasErrorAfterSubs = (code: Code, subs: Sub[]) => {
   if (code.tree.hasError()) {
     // TODO: granular error check
     return false;

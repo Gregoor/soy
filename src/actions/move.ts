@@ -1,6 +1,7 @@
-import { isErrAfterSubs, Sub } from "~/change";
+import { hasErrorAfterSubs, Sub } from "~/change";
 import { Code } from "~/code";
 import { Range } from "~/range";
+import { sliceRange } from "~/utils";
 
 type MoveChange = {
   subs: Sub[];
@@ -12,7 +13,8 @@ export function move(
   cursor: Range,
   offset: -1 | 1
 ): MoveChange | null {
-  const collection = code.tree
+  const { tree, source } = code;
+  const collection = tree
     .getNode(cursor)
     .iterAncestors()
     .find((n) => n.namedChildCount > 1);
@@ -33,11 +35,11 @@ export function move(
   const from = items[index].select();
 
   const subs = [
-    new Sub(to, code.source.slice(from.start, from.end)),
-    new Sub(from, code.source.slice(to.start, to.end)),
+    new Sub(to, sliceRange(source, from)),
+    new Sub(from, sliceRange(source, to)),
   ].sort((s1, s2) => (s1.range.isBefore(s2.range) ? 1 : -1));
 
-  if (isErrAfterSubs(code, subs)) {
+  if (hasErrorAfterSubs(code, subs)) {
     return move(code, collection.select(), offset);
   }
 

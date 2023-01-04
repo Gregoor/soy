@@ -26,17 +26,10 @@ export function extendSelection(code: Code, cursor: Range): Range {
     return cursor;
   }
 
-  if (ancestor.namedChildCount > 0) {
-    const childrenRange = new Range(
-      ancestor.firstChild!.start,
-      ancestor.lastChild!.end
-    );
-    if (!childrenRange.equals(cursor)) {
-      return childrenRange;
-    }
-  }
-
-  return ancestor.select();
+  const { childrenRange } = ancestor;
+  return childrenRange && !childrenRange.equals(cursor)
+    ? childrenRange
+    : ancestor.select();
 }
 
 export function shrinkSelection(

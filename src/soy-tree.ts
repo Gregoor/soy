@@ -16,6 +16,7 @@ export class SoyNode {
     this.inner = inner;
   }
 
+  /* Start of SyntaxNode Proxy methods */
   get start() {
     return this.inner.startIndex;
   }
@@ -43,6 +44,14 @@ export class SoyNode {
   get lastChild(): SoyNode | null {
     const child = this.inner.lastNamedChild;
     return child ? new SoyNode(child) : null;
+  }
+  /* End of SyntaxNode Proxy methods */
+
+  get childrenRange(): Range | null {
+    const { firstChild, lastChild } = this;
+    return firstChild && lastChild
+      ? new Range(firstChild.start, lastChild.end)
+      : null;
   }
 
   equals = (other: SoyNode) => this.inner.equals(other.inner);

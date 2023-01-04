@@ -12,3 +12,6 @@ export const applySubs = (source: string, subs: Sub[]) =>
     (s, { range, replacement }) => replaceRange(s, range, replacement),
     source
   );
+
+export const sliceRange = (s: string, r: { start: number; end: number }) =>
+  s.slice(r.start, r.end);
