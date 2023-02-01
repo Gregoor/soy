@@ -59,12 +59,28 @@
   "contributes": {
     "commands": [
       {
+        "command": "soy.enterSelectionMode",
+        "title": "Soy: Enter Selection Mode"
+      },
+      {
+        "command": "soy.leaveSelectionMode",
+        "title": "Soy: Leave Selection Mode"
+      },
+      {
         "command": "soy.extendSelection",
         "title": "Soy: Extend Selection"
       },
       {
         "command": "soy.shrinkSelection",
         "title": "Soy: Shrink Selection"
+      },
+      {
+        "command": "soy.selectPreviousNeighbor",
+        "title": "Soy: Select Previous Neighbor"
+      },
+      {
+        "command": "soy.selectNextNeighbor",
+        "title": "Soy: Select Next Neighbor"
       },
       {
         "command": "soy.unwrap",
@@ -81,29 +97,49 @@
     ],
     "keybindings": [
       {
+        "command": "soy.enterSelectionMode",
+        "key": "Shift Shift",
+        "when": "editorTextFocus && !editorHasMultipleSelections"
+      },
+      {
+        "command": "soy.leaveSelectionMode",
+        "key": "Escape",
+        "when": "editorTextFocus && soy.isSelectionMode"
+      },
+      {
         "command": "soy.extendSelection",
         "key": "Shift+Alt+up",
-        "when": "editorTextFocus"
+        "when": "editorTextFocus && !editorHasMultipleSelections"
       },
       {
         "command": "soy.shrinkSelection",
         "key": "Shift+Alt+down",
-        "when": "editorTextFocus"
+        "when": "editorTextFocus && !editorHasMultipleSelections"
+      },
+      {
+        "command": "soy.extendSelection",
+        "key": "up",
+        "when": "editorTextFocus && !editorHasMultipleSelections && soy.isSelectionMode"
+      },
+      {
+        "command": "soy.shrinkSelection",
+        "key": "down",
+        "when": "editorTextFocus && !editorHasMultipleSelections && soy.isSelectionMode"
       },
       {
         "command": "soy.unwrap",
         "key": "Ctrl+Shift+up",
-        "when": "editorTextFocus"
+        "when": "editorTextFocus && !editorHasMultipleSelections"
       },
       {
         "command": "soy.moveLeft",
         "key": "Ctrl+Shift+left",
-        "when": "editorTextFocus"
+        "when": "editorTextFocus && !editorHasMultipleSelections"
       },
       {
         "command": "soy.moveRight",
         "key": "Ctrl+Shift+right",
-        "when": "editorTextFocus"
+        "when": "editorTextFocus && !editorHasMultipleSelections"
       }
     ]
   }

@@ -9,7 +9,10 @@ import vscode, {
 } from "vscode";
 
 import { move } from "./actions/move";
-import { extendSelection, shrinkSelection } from "./actions/selection";
+import {
+  extendSelection as _extendSelection,
+  shrinkSelection,
+} from "./actions/selection";
 import { unwrap } from "./actions/unwrap";
 import { Code } from "./code";
 import { initParser, LanguageId, LANGUAGE_IDS } from "./parser";
@@ -100,14 +103,26 @@ const handleMove = (
     });
 };
 
-const commands: Record<string, (params: TextCommandParams) => void> = {
-  extendSelection: ({ code, cursor, textEditor }) => {
-    const { document } = textEditor;
-    if (cursor.isSingle()) {
-      initialCursors.set(document, cursor);
-    }
-    textEditor.selection = toSelection(document, extendSelection(code, cursor));
-  },
+const pre = (key: string) => `soy.${key}`;
+
+type TextCommand = (params: TextCommandParams) => void;
+
+const extendSelection: TextCommand = ({ code, cursor, textEditor }) => {
+  const { document } = textEditor;
+  if (cursor.isSingle()) {
+    initialCursors.set(document, cursor);
+  }
+  textEditor.selection = toSelection(document, _extendSelection(code, cursor));
+};
+
+let disposeSelectionModeTypingHandler: vscode.Disposable | null = null;
+const disableSelectionMode = () => {
+  vscode.commands.executeCommand("setContext", pre("isSelectionMode"), false);
+  disposeSelectionModeTypingHandler?.dispose();
+};
+
+const commands: Record<string, TextCommand> = {
+  extendSelection,
 
   shrinkSelection: ({ code, cursor, textEditor }) => {
     const { document } = textEditor;
@@ -115,6 +130,28 @@ const commands: Record<string, (params: TextCommandParams) => void> = {
     textEditor.selection = toSelection(
       document,
       shrinkSelection(code, cursor, initialCursor)
+    );
+  },
+
+  enterSelectionMode: (params) => {
+    vscode.commands.executeCommand("setContext", pre("isSelectionMode"), true);
+    if (params.textEditor.selection.isEmpty) {
+      extendSelection(params);
+    }
+    disposeSelectionModeTypingHandler?.dispose();
+    disposeSelectionModeTypingHandler = vscode.commands.registerCommand(
+      "type",
+      (text) => {
+        disableSelectionMode();
+        return vscode.commands.executeCommand("default:type", text);
+      }
+    );
+  },
+  leaveSelectionMode: ({ textEditor }) => {
+    disableSelectionMode();
+    textEditor.selection = new vscode.Selection(
+      textEditor.selection.active,
+      textEditor.selection.active
     );
   },
 
@@ -134,23 +171,22 @@ const commands: Record<string, (params: TextCommandParams) => void> = {
 
 export async function activate(context: ExtensionContext) {
   await initParser();
+
   context.subscriptions.push(
     window.onDidChangeActiveTextEditor(handleDidChangeActiveTextEditor),
     workspace.onDidChangeTextDocument(handleDidChangeTextDocument),
-    ...Object.entries(commands).map(([key, callback]) =>
+
+    ...Object.entries(commands).map(([key, cmd]) =>
       vscode.commands.registerTextEditorCommand(
-        `soy.${key}`,
+        pre(key),
         (textEditor, edit) => {
-          if (textEditor.selections.length > 1) {
-            return;
-          }
           const { document, selection } = textEditor;
           const code = getOrInitCode(document);
           if (!code) {
             return;
           }
           const cursor = toOffsetRange(document, selection);
-          return callback({ code, cursor, textEditor, edit });
+          return cmd({ code, cursor, textEditor, edit });
         }
       )
     )
