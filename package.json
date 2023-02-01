@@ -60,23 +60,23 @@
     "commands": [
       {
         "command": "soy.extendSelection",
-        "title": "Extend Selection"
+        "title": "Soy: Extend Selection"
       },
       {
         "command": "soy.shrinkSelection",
-        "title": "Shrink Selection"
+        "title": "Soy: Shrink Selection"
       },
       {
         "command": "soy.unwrap",
-        "title": "Unwrap"
+        "title": "Soy: Unwrap"
       },
       {
         "command": "soy.moveLeft",
-        "title": "Move Left"
+        "title": "Soy: Move Left"
       },
       {
         "command": "soy.moveRight",
-        "title": "Move Right"
+        "title": "Soy: Move Right"
       }
     ],
     "keybindings": [
