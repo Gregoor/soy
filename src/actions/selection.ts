@@ -37,7 +37,7 @@ export function shrinkSelection(
   cursor: Range,
   initialCursor?: Range
 ): Range {
-  if (!initialCursor) {
+  if (!initialCursor || !cursor.includes(initialCursor)) {
     return code.tree.getNode(cursor).firstChild?.select() ?? cursor;
   }
 
