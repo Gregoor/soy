@@ -3,6 +3,13 @@ import path from "path";
 
 import Parser from "web-tree-sitter";
 
+// TODO remove after web-tree-sitter has proper Node 18 support
+//https://github.com/tree-sitter/tree-sitter/issues/1765
+try {
+  //@ts-ignore
+  delete WebAssembly.instantiateStreaming;
+} catch {}
+
 const moduleParsersPath = path.join(
   __dirname,
   "..",

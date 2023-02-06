@@ -17,13 +17,13 @@ export function move(
   const collection = tree
     .getNode(cursor)
     .iterAncestors()
-    .find((n) => n.namedChildCount > 1);
+    .find((n) => n.childCount > 1);
 
   if (!collection) {
     return null;
   }
 
-  const items = collection.namedChildren;
+  const items = collection.children;
   const index = items.findIndex((n) => n.select().includes(cursor));
 
   const to = items[index + offset]?.select();

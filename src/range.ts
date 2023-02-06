@@ -1,10 +1,13 @@
+type RangeLike = {
+  start: number;
+  end: number;
+};
+
 export class Range {
   anchor: number;
   private readonly _active: null | number;
 
-  static surround(
-    ...items: ({ start?: number | null; end?: number | null } | number)[]
-  ) {
+  static surround(...items: (RangeLike | number)[]) {
     return new Range(
       Math.min(...items.map((r) => (typeof r == "number" ? r : r.start!))),
       Math.max(...items.map((r) => (typeof r == "number" ? r : r.end!)))
@@ -39,14 +42,14 @@ export class Range {
     return this.anchor == this.active;
   }
 
-  includes(pos: number | Range): boolean {
-    return (pos instanceof Range ? [pos.start, pos.end] : [pos]).every(
+  includes(pos: number | RangeLike): boolean {
+    return (typeof pos == "number" ? [pos] : [pos.start, pos.end]).every(
       (pos) => pos >= this.start && pos <= this.end
     );
   }
 
-  equals(other: Range) {
-    return this.start == other.start! && this.end == other.end!;
+  equals(other: RangeLike) {
+    return this.start == other.start && this.end == other.end;
   }
 
   isBefore(other: Range) {

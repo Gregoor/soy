@@ -11,6 +11,8 @@ import vscode, {
 import { move } from "./actions/move";
 import {
   extendSelection as _extendSelection,
+  selectNextSibling,
+  selectPreviousSibling,
   shrinkSelection,
 } from "./actions/selection";
 import { unwrap } from "./actions/unwrap";
@@ -105,6 +107,10 @@ const handleMove = (
 
 const pre = (key: string) => `soy.${key}`;
 
+function disableSelectionMode() {
+  vscode.commands.executeCommand("setContext", pre("isSelectionMode"), false);
+}
+
 type TextCommand = (params: TextCommandParams) => void;
 
 const extendSelection: TextCommand = ({ code, cursor, textEditor }) => {
@@ -115,43 +121,48 @@ const extendSelection: TextCommand = ({ code, cursor, textEditor }) => {
   textEditor.selection = toSelection(document, _extendSelection(code, cursor));
 };
 
-let disposeSelectionModeTypingHandler: vscode.Disposable | null = null;
-const disableSelectionMode = () => {
-  vscode.commands.executeCommand("setContext", pre("isSelectionMode"), false);
-  disposeSelectionModeTypingHandler?.dispose();
-};
-
 const commands: Record<string, TextCommand> = {
-  extendSelection,
-
-  shrinkSelection: ({ code, cursor, textEditor }) => {
-    const { document } = textEditor;
-    const initialCursor = initialCursors.get(document);
-    textEditor.selection = toSelection(
-      document,
-      shrinkSelection(code, cursor, initialCursor)
-    );
-  },
-
   enterSelectionMode: (params) => {
     vscode.commands.executeCommand("setContext", pre("isSelectionMode"), true);
     if (params.textEditor.selection.isEmpty) {
       extendSelection(params);
     }
-    disposeSelectionModeTypingHandler?.dispose();
-    disposeSelectionModeTypingHandler = vscode.commands.registerCommand(
-      "type",
-      (text) => {
-        disableSelectionMode();
-        return vscode.commands.executeCommand("default:type", text);
-      }
-    );
   },
   leaveSelectionMode: ({ textEditor }) => {
     disableSelectionMode();
-    textEditor.selection = new vscode.Selection(
-      textEditor.selection.active,
-      textEditor.selection.active
+    const { active } = textEditor.selection;
+    textEditor.selection = new vscode.Selection(active, active);
+  },
+
+  extendSelection,
+  shrinkSelection: ({ code, cursor, textEditor }) => {
+    const { document } = textEditor;
+    textEditor.selection = toSelection(
+      document,
+      shrinkSelection(code, cursor, initialCursors.get(document))
+    );
+  },
+  selectPreviousSibling: ({ code, cursor, textEditor }) => {
+    const { document } = textEditor;
+    const initialCursor = initialCursors.get(document);
+    if (!initialCursor) {
+      return;
+    }
+
+    textEditor.selection = toSelection(
+      textEditor.document,
+      selectPreviousSibling(code, cursor, initialCursor)
+    );
+  },
+  selectNextSibling: ({ code, cursor, textEditor }) => {
+    const { document } = textEditor;
+    const initialCursor = initialCursors.get(document);
+    if (!initialCursor) {
+      return;
+    }
+    textEditor.selection = toSelection(
+      textEditor.document,
+      selectNextSibling(code, cursor, initialCursor)
     );
   },
 
@@ -189,6 +200,17 @@ export async function activate(context: ExtensionContext) {
           return cmd({ code, cursor, textEditor, edit });
         }
       )
-    )
+    ),
+    workspace.onDidChangeTextDocument(() => {
+      disableSelectionMode();
+    }),
+    window.onDidChangeTextEditorSelection((event) => {
+      if (event.kind == vscode.TextEditorSelectionChangeKind.Mouse) {
+        disableSelectionMode();
+      }
+    }),
+    window.onDidChangeActiveTextEditor(() => {
+      disableSelectionMode();
+    })
   );
 }

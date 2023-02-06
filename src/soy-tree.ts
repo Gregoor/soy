@@ -29,11 +29,11 @@ export class SoyNode {
     return parent ? new SoyNode(parent) : null;
   }
 
-  get namedChildCount(): number {
+  get childCount(): number {
     return this.inner.namedChildCount;
   }
 
-  get namedChildren(): SoyNode[] {
+  get children(): SoyNode[] {
     return this.inner.namedChildren.map((n) => new SoyNode(n));
   }
 
@@ -43,6 +43,15 @@ export class SoyNode {
   }
   get lastChild(): SoyNode | null {
     const child = this.inner.lastNamedChild;
+    return child ? new SoyNode(child) : null;
+  }
+
+  get previousSibling(): SoyNode | null {
+    const child = this.inner.previousNamedSibling;
+    return child ? new SoyNode(child) : null;
+  }
+  get nextSibling(): SoyNode | null {
+    const child = this.inner.nextNamedSibling;
     return child ? new SoyNode(child) : null;
   }
   /* End of SyntaxNode Proxy methods */
@@ -55,9 +64,6 @@ export class SoyNode {
   }
 
   equals = (other: SoyNode) => this.inner.equals(other.inner);
-
-  getNode = ({ start, end }: Range) =>
-    new SoyNode(this.inner.descendantForIndex(start, end));
 
   iterAncestors = () => _(iterAncestors(this));
 
@@ -73,10 +79,22 @@ export class SoyTree {
 
   hasError = (): boolean => this.inner.rootNode.hasError();
 
-  getNode = (a: Range | number) =>
-    new SoyNode(
-      this.inner.rootNode.descendantForIndex(
-        ...((a instanceof Range ? [a.start, a.end] : [a]) as [number, number])
-      )
-    );
+  getNode = (a: Range | number): SoyNode => {
+    const { rootNode } = this.inner;
+
+    const index = (a instanceof Range ? [a.start, a.end] : [a]) as [number];
+    let node = rootNode.descendantForIndex(...index);
+    if (node.isNamed()) {
+      return new SoyNode(node);
+    }
+
+    if (typeof a == "number") {
+      node = rootNode.namedDescendantForIndex(a - 1);
+    } else if (a.isSingle()) {
+      node = rootNode.namedDescendantForIndex(a.start - 1);
+    } else {
+      node = rootNode.namedDescendantForIndex(...index);
+    }
+    return new SoyNode(node);
+  };
 }

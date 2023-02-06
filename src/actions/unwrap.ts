@@ -10,19 +10,13 @@ const isFieldOnParent = (n: SyntaxNode) =>
 
 export function unwrap(code: Code, cursor: Range): Sub | null {
   const node = code.tree.getNode(cursor);
-  if (!node.inner.isNamed()) {
-    if (cursor.isSingle() && cursor.start > 0) {
-      return unwrap(code, new Range(cursor.start - 1));
-    }
-    return null;
-  }
   for (const ancestor of node.iterAncestors()) {
-    if (cursor.includes(ancestor.select()) || isFieldOnParent(ancestor.inner)) {
+    if (cursor.includes(ancestor) || isFieldOnParent(ancestor.inner)) {
       continue;
     }
 
     const { childrenRange } = ancestor;
-    for (const range of childrenRange && !childrenRange.equals(node.select())
+    for (const range of childrenRange && !childrenRange.equals(node)
       ? [childrenRange, ancestor.select()]
       : [ancestor.select()]) {
       const sub = new Sub(range, sliceRange(code.source, node));
