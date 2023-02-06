@@ -12,18 +12,16 @@ const buildOptions: esbuild.BuildOptions = {
   minify: !dev,
   sourcemap: dev,
   logLevel: "info",
+  platform: "node",
+  format: "cjs",
+  outfile: path.join("out", "node.js"),
+  define: { "process.env.IS_DEV": JSON.stringify(dev) },
 };
 
-esbuild
-  .context({
-    ...buildOptions,
-    platform: "node",
-    format: "cjs",
-    outfile: path.join("out", "node.js"),
-    define: { "process.env.IS_DEV": JSON.stringify(dev) },
-  })
-  .then((context) => {
-    if (dev) {
-      context.watch();
-    }
+if (dev) {
+  esbuild.context(buildOptions).then((context) => {
+    context.watch();
   });
+} else {
+  esbuild.build(buildOptions);
+}
