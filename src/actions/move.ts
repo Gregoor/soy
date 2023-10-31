@@ -8,6 +8,10 @@ type MoveChange = {
   cursor: Range;
 };
 
+// language based config? e.g.
+// - javascript
+//   - ternary_expression
+
 export function move(
   code: Code,
   cursor: Range,
