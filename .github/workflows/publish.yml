@@ -43,6 +43,7 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           default_bump: ${{ inputs.bump_type }}
+      - run: git status
       - env:
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
         run: npx @vscode/vsce publish ${{ steps.tag_version.outputs.new_tag }} --no-dependencies --allow-missing-repository
