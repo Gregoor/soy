@@ -22,6 +22,7 @@ describe("extend", () => {
     ['f("a•b")', 'f(≤"ab"≥)'],
     [["{", "  asd•ef;", "}"].join("\n"), ["{", "  ≤asdef≥;", "}"].join("\n")],
     ["[≤a≥, b]", "[≤a, b≥]"],
+    ["≤a≥[0]", "≤a[0]≥"],
   ])("%s", (sourceWithCursor: string, expected: string) => {
     const { source, cursors } = parseCursorSource(sourceWithCursor);
     const code = new Code(source, "javascript");

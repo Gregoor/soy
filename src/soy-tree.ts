@@ -57,9 +57,19 @@ export class SoyNode {
   /* End of SyntaxNode Proxy methods */
 
   get childrenRange(): Range | null {
-    const { firstChild, lastChild } = this;
+    const { firstChild, lastChild } = this.inner;
+
+    // hacky way of discerning between [≤a, b≥] and ≤a[0]≥
+    // where the former is enclosed by unnamed children
+    if (!firstChild?.isNamed() && !lastChild?.isNamed()) {
+      const { firstChild, lastChild } = this;
+      return firstChild && lastChild
+        ? new Range(firstChild.start, lastChild.end)
+        : null;
+    }
+
     return firstChild && lastChild
-      ? new Range(firstChild.start, lastChild.end)
+      ? new Range(firstChild.startIndex, lastChild.endIndex)
       : null;
   }
 

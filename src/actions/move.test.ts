@@ -18,6 +18,7 @@ test.each([
   ["[a, ≤b≥]", "[≤b≥, a]", -1],
   ["[≤aa≥, bbb]", "[bbb, ≤aa≥]", +1],
   ["[b, f(≤a≥)]", "[≤f(a)≥, b]", -1],
+  ["[•1, []]", "[[1]]", +1],
 ])("%s", (sourceWithCursor: string, expected: string, offset: number) => {
   assert(offset == -1 || offset == 1);
   const { source, cursors } = parseCursorSource(sourceWithCursor);

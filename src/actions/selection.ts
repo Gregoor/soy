@@ -28,6 +28,7 @@ export function extendSelection(code: Code, cursor: Range): Range {
   }
 
   const { childrenRange } = ancestor;
+
   return childrenRange && !childrenRange.equals(cursor)
     ? childrenRange
     : ancestor.select();
@@ -111,6 +112,7 @@ function selectSibling(
   const [from, to] = isAnchorAtEnd ? [last, first] : [first, last];
 
   const sibling = isPrev ? to.previousSibling : to.nextSibling;
+
   return sibling ? Range.surround(from, sibling) : cursor;
 }
 
