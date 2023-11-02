@@ -47,7 +47,7 @@ jobs:
       - env:
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
         run: |
-          npx @vscode/vsce publish ${{ steps.tag_version.outputs.new_tag }} \
+          npx @vscode/vsce publish ${{ steps.tag_version.outputs.new_version }} \
             --no-dependencies \
             --allow-missing-repository \
             --no-update-package-json
