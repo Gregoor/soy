@@ -28,11 +28,3 @@ export function changeCode(code: Code, subs: Sub[]) {
   );
   return newCode;
 }
-
-export function hasErrorAfterSubs(code: Code, subs: Sub[]) {
-  if (code.tree.hasError()) {
-    // TODO: granular error check
-    return false;
-  }
-  return changeCode(code, subs).tree.hasError();
-}
