@@ -46,7 +46,7 @@ jobs:
       - run: git status
       - env:
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
-        run: npx @vscode/vsce publish ${{ steps.tag_version.outputs.new_tag }} --no-dependencies --allow-missing-repository
+        run: npx @vscode/vsce@2.18.0 publish ${{ steps.tag_version.outputs.new_tag }} --no-dependencies --allow-missing-repository
       - name: Create a GitHub release
         uses: ncipollo/release-action@v1
         with:
