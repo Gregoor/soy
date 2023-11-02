@@ -7,7 +7,7 @@ export const replaceRange = (
   replacement: string
 ) => s.substring(0, start) + replacement + s.substring(end);
 
-export const applySubs = (source: string, subs: Sub[]) =>
+export const subSource = (source: string, subs: Sub[]) =>
   subs.reduce(
     (s, { range, replacement }) => replaceRange(s, range, replacement),
     source

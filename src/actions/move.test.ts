@@ -4,7 +4,7 @@ import assert from "assert";
 import { Code } from "~/code";
 import { cursorifySource, parseCursorSource } from "~/cursor-source";
 import { initParser } from "~/parser";
-import { applySubs } from "~/utils";
+import { subSource } from "~/utils";
 
 import { move } from "./move";
 
@@ -26,7 +26,7 @@ test.each([
   const change = move(code, cursors[0], offset);
   expect(change).toBeTruthy();
   assert(change);
-  expect(cursorifySource(applySubs(source, change.subs), [change.cursor])).toBe(
+  expect(cursorifySource(subSource(source, change.subs), [change.cursor])).toBe(
     expected
   );
 });

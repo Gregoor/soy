@@ -1,6 +1,6 @@
 import { Code } from "./code";
 import { Range } from "./range";
-import { applySubs } from "./utils";
+import { subSource } from "./utils";
 
 // A struct for substitutions
 export class Sub {
@@ -16,19 +16,23 @@ export class Sub {
 export type SubChange = { sub: Sub; cursor: Range };
 export type Change = { sub?: Sub; cursor: Range };
 
-export const hasErrorAfterSubs = (code: Code, subs: Sub[]) => {
-  if (code.tree.hasError()) {
-    // TODO: granular error check
-    return false;
-  }
-  const testCode = code.copy();
-  testCode.edit(
+export function changeCode(code: Code, subs: Sub[]) {
+  const newCode = code.copy();
+  newCode.edit(
     subs.map(({ range: r, replacement: text }) => ({
       start: r.start,
       oldEnd: r.end,
       newEnd: r.start + text.length,
     })),
-    applySubs(code.source, subs)
+    subSource(code.source, subs)
   );
-  return testCode.tree.hasError();
-};
+  return newCode;
+}
+
+export function hasErrorAfterSubs(code: Code, subs: Sub[]) {
+  if (code.tree.hasError()) {
+    // TODO: granular error check
+    return false;
+  }
+  return changeCode(code, subs).tree.hasError();
+}
