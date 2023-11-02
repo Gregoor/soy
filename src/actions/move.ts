@@ -1,4 +1,4 @@
-import { hasErrorAfterSubs, Sub } from "~/change";
+import { changeCode, Sub } from "~/change";
 import { Code } from "~/code";
 import { Range } from "~/range";
 import { sliceRange } from "~/utils";
@@ -43,7 +43,8 @@ export function move(
     new Sub(from, sliceRange(source, to)),
   ].sort((s1, s2) => (s1.range.isBefore(s2.range) ? 1 : -1));
 
-  if (hasErrorAfterSubs(code, subs)) {
+  const newCode = changeCode(code, subs);
+  if (newCode.tree.getNode(collection.start).inner.hasError()) {
     return move(code, collection.select(), offset);
   }
 
