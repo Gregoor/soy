@@ -30,6 +30,7 @@ const languages = {
   javascriptreact: "tree-sitter-javascript",
   json: "tree-sitter-json",
   python: "tree-sitter-python",
+  rescript: "tree-sitter-rescript",
   ruby: "tree-sitter-ruby",
   rust: "tree-sitter-rust",
   typescript: "tree-sitter-typescript",
