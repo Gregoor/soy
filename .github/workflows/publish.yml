@@ -1,0 +1,57 @@
+name: Publish
+on:
+  workflow_dispatch:
+    inputs:
+      bump_type:
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+jobs:
+  publish:
+    name: Publish
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 16
+      - name: Cache pnpm modules
+        uses: actions/cache@v2
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-
+      - uses: pnpm/action-setup@v2.1.0
+        with:
+          version: 7.17.1
+          run_install: true
+
+      - run: curl https://raw.githubusercontent.com/Gregoor/soy/main/README.md > README.md
+
+      - uses: fregante/setup-git-user@v1
+      - env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+        run: |
+          pnpm build
+          npx @vscode/vsce package --no-dependencies --allow-missing-repository
+      - name: Bump version and push tag
+        id: tag_version
+        uses: mathieudutour/github-tag-action@v6.1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          default_bump: ${{ inputs.bump_type }}
+      - run: git status
+      - env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+        run: |
+          npx @vscode/vsce publish ${{ steps.tag_version.outputs.new_version }} \
+            --no-dependencies \
+            --allow-missing-repository \
+            --no-update-package-json
+      - name: Create a GitHub release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ steps.tag_version.outputs.new_tag }}

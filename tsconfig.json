@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "rootDir": "src",
+    "typeRoots": ["./node_modules/@types"],
+    "module": "Node16",
+    "target": "es2021",
+    "lib": ["es2021"],
+    "outDir": "out",
+    "sourceMap": true,
+    "strict": true,
+    "esModuleInterop": true,
+    "baseUrl": "src",
+    "paths": {
+      "~/*": ["*"]
+    },
+    "resolveJsonModule": true
+  },
+  "exclude": [
+    "node_modules",
+    ".vscode-test",
+    "ideas",
+    "jest.config.ts",
+    "scripts"
+  ]
+}
