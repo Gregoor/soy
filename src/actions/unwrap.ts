@@ -1,17 +1,12 @@
-import { SyntaxNode } from "web-tree-sitter";
-
 import { changeCode, Sub } from "~/change";
 import { Code } from "~/code";
 import { Range } from "~/range";
 import { sliceRange } from "~/utils";
 
-const isFieldOnParent = (n: SyntaxNode) =>
-  n.parent?.childForFieldName(n.type)?.equals(n);
-
 export function unwrap(code: Code, cursor: Range): Sub | null {
   const node = code.tree.getNode(cursor);
   for (const ancestor of node.iterAncestors()) {
-    if (cursor.includes(ancestor) || isFieldOnParent(ancestor.inner)) {
+    if (cursor.includes(ancestor)) {
       continue;
     }
 

@@ -20,14 +20,7 @@ test.each([
   ["let n = ≤1≥;", "≤1≥"],
   ["[1•, 2]", "[≤1≥]"],
   ["(ab: ≤A≥) => {}", "(≤A≥) => {}"],
-  [
-    `fn(23, ≤(o) => {
-  const { a } = o;
-}≥);`,
-    `≤(o) => {
-  const { a } = o;
-}≥;`,
-  ],
+  ["fn(≤a≥, b)", "fn(≤a≥)"],
 ])("%s", (sourceWithCursor: string, expected: string) => {
   const { source, cursors } = parseCursorSource(sourceWithCursor);
   const code = new Code(source, "javascript");
