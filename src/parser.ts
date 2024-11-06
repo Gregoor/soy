@@ -35,6 +35,7 @@ const languages = {
   rust: "tree-sitter-rust",
   typescript: "tree-sitter-typescript",
   typescriptreact: "tree-sitter-tsx",
+  vue: "tree-sitter-vue",
   yaml: "tree-sitter-yaml",
 };
 

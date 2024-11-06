@@ -105,10 +105,14 @@ const handleMove = (
     });
 };
 
-const pre = (key: string) => `soy.${key}`;
+const prefix = (key: string) => `soy.${key}`;
 
 function disableSelectionMode() {
-  vscode.commands.executeCommand("setContext", pre("isSelectionMode"), false);
+  vscode.commands.executeCommand(
+    "setContext",
+    prefix("isSelectionMode"),
+    false
+  );
 }
 
 type TextCommand = (params: TextCommandParams) => void;
@@ -123,7 +127,11 @@ const extendSelection: TextCommand = ({ code, cursor, textEditor }) => {
 
 const commands: Record<string, TextCommand> = {
   enterSelectionMode: (params) => {
-    vscode.commands.executeCommand("setContext", pre("isSelectionMode"), true);
+    vscode.commands.executeCommand(
+      "setContext",
+      prefix("isSelectionMode"),
+      true
+    );
     if (params.textEditor.selection.isEmpty) {
       extendSelection(params);
     }
@@ -170,7 +178,9 @@ const commands: Record<string, TextCommand> = {
     const sub = unwrap(code, cursor);
     if (sub) {
       textEditor.insertSnippet(
-        new vscode.SnippetString(`$\{0:${sub.replacement}}`),
+        new vscode.SnippetString(
+          `$\{0:${sub.replacement.replaceAll("}", "\\}")}}`
+        ),
         toPointRange(textEditor.document, sub.range)
       );
     }
@@ -181,7 +191,11 @@ const commands: Record<string, TextCommand> = {
 };
 
 export async function activate(context: ExtensionContext) {
-  await initParser();
+  try {
+    await initParser();
+  } catch (e) {
+    console.error("Failed to initialize parser", e);
+  }
 
   context.subscriptions.push(
     window.onDidChangeActiveTextEditor(handleDidChangeActiveTextEditor),
@@ -189,7 +203,7 @@ export async function activate(context: ExtensionContext) {
 
     ...Object.entries(commands).map(([key, cmd]) =>
       vscode.commands.registerTextEditorCommand(
-        pre(key),
+        prefix(key),
         (textEditor, edit) => {
           const { document, selection } = textEditor;
           const code = getOrInitCode(document);

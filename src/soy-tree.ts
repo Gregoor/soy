@@ -61,7 +61,7 @@ export class SoyNode {
 
     // hacky way of discerning between [≤a, b≥] and ≤a[0]≥
     // where the former is enclosed by unnamed children
-    if (!firstChild?.isNamed() && !lastChild?.isNamed()) {
+    if (!firstChild?.isNamed && !lastChild?.isNamed) {
       const { firstChild, lastChild } = this;
       return firstChild && lastChild
         ? new Range(firstChild.start, lastChild.end)
@@ -87,14 +87,14 @@ export class SoyTree {
     this.inner = inner;
   }
 
-  hasError = (): boolean => this.inner.rootNode.hasError();
+  hasError = (): boolean => this.inner.rootNode.hasError;
 
   getNode = (a: Range | number): SoyNode => {
     const { rootNode } = this.inner;
 
     const index = (a instanceof Range ? [a.start, a.end] : [a]) as [number];
     let node = rootNode.descendantForIndex(...index);
-    if (node.isNamed()) {
+    if (node.isNamed) {
       return new SoyNode(node);
     }
 

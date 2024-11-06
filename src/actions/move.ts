@@ -44,7 +44,7 @@ export function move(
   ].sort((s1, s2) => (s1.range.isBefore(s2.range) ? 1 : -1));
 
   const newCode = changeCode(code, subs);
-  if (newCode.tree.getNode(collection.start).inner.hasError()) {
+  if (newCode.tree.getNode(collection.start).inner.hasError) {
     return move(code, collection.select(), offset);
   }
 
