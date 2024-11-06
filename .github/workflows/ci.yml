@@ -7,20 +7,16 @@ jobs:
     name: Types
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-
-      - name: Cache pnpm modules
-        uses: actions/cache@v2
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
         with:
-          path: ~/.pnpm-store
-          key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-
-
-      - uses: pnpm/action-setup@v2.1.0
+          run_install: false
+      - uses: actions/setup-node@v4
         with:
-          version: 7.17.1
-          run_install: true
+          node-version: 20
+          cache: "pnpm"
+      - run: pnpm install
 
       - run: pnpm types
 
@@ -28,19 +24,15 @@ jobs:
     name: Test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-
-      - name: Cache pnpm modules
-        uses: actions/cache@v2
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
         with:
-          path: ~/.pnpm-store
-          key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-
-
-      - uses: pnpm/action-setup@v2.1.0
+          run_install: false
+      - uses: actions/setup-node@v4
         with:
-          version: 7.17.1
-          run_install: true
+          node-version: 20
+          cache: "pnpm"
+      - run: pnpm install
 
       - run: pnpm test
