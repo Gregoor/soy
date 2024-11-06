@@ -16,7 +16,7 @@
     "test": "jest src"
   },
   "engines": {
-    "vscode": "^1.84.0"
+    "vscode": "^1.95.0"
   },
   "devDependencies": {
     "@jest/globals": "^29.7.0",
